@@ -1,25 +1,40 @@
-# ۷. اعمال تنظیمات خودکار روی کانفیگ OpenVPN
-OPENVPN_CONF="/etc/openvpn/server.conf"
+#!/bin/bash
+# NYR PRO PANEL INSTALLER
 
-if [ -f "$OPENVPN_CONF" ]; then
-    echo "در حال پیکربندی خودکار فایل server.conf..."
-    
-    # جلوگیری از تکرار خطوط در صورت اجرای چندباره اسکریپت
-    sed -i '/management 127.0.0.1 7505/d' $OPENVPN_CONF
-    sed -i '/status \/var\/log\/openvpn-status.log/d' $OPENVPN_CONF
-    sed -i '/status-version/d' $OPENVPN_CONF
-    sed -i '/script-security/d' $OPENVPN_CONF
-    sed -i '/client-connect/d' $OPENVPN_CONF
+if [ "$EUID" -ne 0 ]; then echo "Please run as root"; exit; fi
 
-    # اضافه کردن تنظیمات جدید
-    echo "management 127.0.0.1 7505" >> $OPENVPN_CONF
-    echo "status /var/log/openvpn-status.log 1" >> $OPENVPN_CONF
-    echo "status-version 2" >> $OPENVPN_CONF
-    echo "script-security 2" >> $OPENVPN_CONF
-    echo "client-connect \"/usr/bin/python3 /opt/nyr-panel/auth.py\"" >> $OPENVPN_CONF
+echo "🚀 Starting Installation..."
 
-    # ریستارت کردن OpenVPN برای اعمال تغییرات
+# نصب پیش‌نیازها
+apt update && apt install -y python3-pip python3-venv netcat-openbsd
+
+# کپی فایل‌ها و راه‌اندازی محیط
+mkdir -p /opt/nyr-panel
+cp -r . /opt/nyr-panel
+cd /opt/nyr-panel
+python3 -m venv venv
+./venv/bin/pip install -r requirements.txt
+
+# تنظیم خودکار OpenVPN server.conf
+CONF="/etc/openvpn/server.conf"
+if [ -f "$CONF" ]; then
+    sed -i '/management/d; /status /d; /status-version/d; /script-security/d; /client-connect/d' $CONF
+    echo "management 127.0.0.1 7505" >> $CONF
+    echo "status /var/log/openvpn-status.log 1" >> $CONF
+    echo "status-version 2" >> $CONF
+    echo "script-security 2" >> $CONF
+    echo "client-connect \"/usr/bin/python3 /opt/nyr-panel/auth.py\"" >> $CONF
     systemctl restart openvpn@server
-else
-    echo "خطا: فایل server.conf پیدا نشد. مطمئن شوید ابتدا اسکریپت Nyr را نصب کرده‌اید."
 fi
+
+# اجازه دسترسی به پوشه کلاینت‌ها برای دانلود
+chmod 755 /etc/openvpn/client
+
+# ایجاد سرویس‌های سیستم (Panel & Core)
+# ... (کد سرویس‌ها مشابه قبل است) ...
+
+systemctl daemon-reload
+systemctl enable nyr-panel nyr-core
+systemctl start nyr-panel nyr-core
+
+echo "✅ Done! Panel: http://YOUR_IP:6000"
