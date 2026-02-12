@@ -22,56 +22,54 @@
             background-color: var(--bg-color);
             color: var(--text);
             margin: 0;
-            padding: 20px;
+            padding: 15px;
         }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
+        .container { max-width: 800px; margin: 0 auto; }
 
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .header h1 {
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { 
             background: linear-gradient(to right, var(--primary), var(--accent));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-size: 2.5rem;
-            margin-bottom: 5px;
+            font-size: 2rem; 
+            margin: 0;
         }
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
         .stat-card {
             background: var(--card-bg);
-            padding: 15px;
-            border-radius: 15px;
+            padding: 12px;
+            border-radius: 12px;
             text-align: center;
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
-        .stat-card i { color: var(--primary); margin-bottom: 10px; }
+        .stat-card div { font-weight: bold; font-size: 1.1rem; color: var(--accent); }
+        .stat-card small { color: #94a3b8; font-size: 0.75rem; }
 
         .add-user-box {
             background: var(--card-bg);
-            padding: 25px;
-            border-radius: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
         }
 
         .input-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr auto;
+            display: flex;
+            flex-direction: column;
             gap: 10px;
+        }
+
+        @media (min-width: 600px) {
+            .input-group { flex-direction: row; }
         }
 
         input {
@@ -79,59 +77,59 @@
             border: 1px solid #475569;
             color: white;
             padding: 12px;
-            border-radius: 10px;
-            outline: none;
+            border-radius: 8px;
+            flex: 1;
         }
 
-        button {
-            cursor: pointer;
+        .btn-add {
+            background: var(--primary);
+            color: white;
+            padding: 12px 20px;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
+            cursor: pointer;
             font-weight: bold;
-            transition: 0.3s;
-        }
-
-        .btn-add { background: var(--primary); color: white; padding: 0 25px; }
-        .btn-add:hover { background: #2563eb; transform: translateY(-2px); }
-
-        .user-list {
-            display: grid;
-            gap: 15px;
         }
 
         .user-card {
             background: var(--card-bg);
-            padding: 20px;
-            border-radius: 15px;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 10px;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
+            gap: 12px;
+            border-right: 4px solid var(--primary);
+        }
+
+        @media (min-width: 600px) {
+            .user-card { flex-direction: row; justify-content: space-between; align-items: center; }
+        }
+
+        .user-info h3 { margin: 0; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+        .status-dot { width: 8px; height: 8px; background: var(--success); border-radius: 50%; }
+
+        .actions { display: flex; gap: 5px; flex-wrap: wrap; }
+
+        .btn-action {
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            color: white;
+            display: flex;
             align-items: center;
-            border-right: 5px solid var(--primary);
+            gap: 5px;
+            flex: 1;
+            justify-content: center;
         }
 
-        .user-info h3 { margin: 0; font-size: 1.2rem; }
-        .user-info p { margin: 5px 0 0; font-size: 0.85rem; color: #94a3b8; }
-
-        .actions { display: flex; gap: 8px; }
-
-        .btn-action { padding: 8px 12px; font-size: 0.8rem; display: flex; align-items: center; gap: 5px; }
-        .btn-download { background: var(--success); color: white; }
-        .btn-reset { background: var(--warning); color: white; }
-        .btn-delete { background: var(--danger); color: white; }
-
-        @media (max-width: 600px) {
-            .input-group { grid-template-columns: 1fr; }
-            .user-card { flex-direction: column; text-align: center; gap: 15px; }
-            .user-card { border-right: none; border-top: 5px solid var(--primary); }
-        }
-
-        .badge {
-            padding: 2px 8px;
-            border-radius: 5px;
-            font-size: 0.7rem;
-            margin-right: 5px;
-        }
-        .badge-active { background: rgba(34, 197, 94, 0.2); color: var(--success); }
+        .btn-download { background: #0ea5e9; }
+        .btn-reset { background: var(--warning); }
+        .btn-delete { background: var(--danger); }
+        
+        button:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
@@ -139,44 +137,41 @@
 <div class="container">
     <div class="header">
         <h1>NYR PRO DASHBOARD</h1>
-        <p>Advanced Management System</p>
+        <small style="color: #64748b;">Advanced VPN Management</small>
     </div>
 
     <div class="stats-grid">
         <div class="stat-card">
-            <i class="fas fa-memory"></i>
             <div id="ram-usage">0%</div>
             <small>RAM</small>
         </div>
         <div class="stat-card">
-            <i class="fas fa-users"></i>
             <div id="total-users">0</div>
             <small>کاربران</small>
         </div>
         <div class="stat-card">
-            <i class="fas fa-plug"></i>
-            <div>5000</div>
-            <small>پورت پنل</small>
+            <div style="color: var(--success);">5000</div>
+            <small>پورت</small>
         </div>
     </div>
 
     <div class="add-user-box">
         <div class="input-group">
-            <input type="text" id="username" placeholder="نام کاربری">
-            <input type="number" id="limit" placeholder="حجم (GB)" value="10">
-            <input type="number" id="days" placeholder="زمان (روز)" value="30">
+            <input type="text" id="username" placeholder="نام کاربر">
+            <input type="number" id="limit" placeholder="GB" value="10" style="max-width: 80px;">
+            <input type="number" id="days" placeholder="روز" value="30" style="max-width: 80px;">
             <button class="btn-add" onclick="addUser()">
-                <i class="fas fa-user-plus"></i> ساخت کاربر
+                <i class="fas fa-plus"></i> ایجاد
             </button>
         </div>
     </div>
 
-    <div id="user-list" class="user-list">
+    <div id="user-list">
         </div>
 </div>
 
 <script>
-    function fetchStats() {
+    function updateData() {
         fetch('/api/stats')
             .then(res => res.json())
             .then(data => {
@@ -189,21 +184,18 @@
                     list.innerHTML += `
                         <div class="user-card">
                             <div class="user-info">
-                                <h3>${user.username} <span class="badge badge-active">${user.status}</span></h3>
-                                <p>
-                                    <i class="fas fa-chart-pie"></i> مصرف: ${user.usage} | 
-                                    <i class="fas fa-clock"></i> انقضا: ${user.expiry} روز
-                                </p>
+                                <h3><span class="status-dot"></span> ${user.username}</h3>
+                                <small style="color:#94a3b8">مصرف: ${user.usage} | انقضا: ${user.expiry} روز</small>
                             </div>
                             <div class="actions">
-                                <button class="btn-action btn-download" onclick="window.location='/api/download/${user.username}'">
-                                    <i class="fas fa-download"></i> دانلود
+                                <button class="btn-action btn-download" onclick="location.href='/api/download/${user.username}'">
+                                    <i class="fas fa-file-download"></i> OVPN
                                 </button>
                                 <button class="btn-action btn-reset" onclick="resetUser('${user.username}')">
-                                    <i class="fas fa-sync-alt"></i> تمدید
+                                    <i class="fas fa-sync"></i> تمدید
                                 </button>
                                 <button class="btn-action btn-delete" onclick="deleteUser('${user.username}')">
-                                    <i class="fas fa-trash"></i> حذف
+                                    <i class="fas fa-trash"></i>
                                 </button>
                             </div>
                         </div>
@@ -214,50 +206,35 @@
 
     function addUser() {
         const username = document.getElementById('username').value;
-        const limit = document.getElementById('limit').value;
-        const days = document.getElementById('days').value;
-
-        if(!username) return alert('نام کاربری الزامی است');
-
+        if(!username) return alert('نام را وارد کنید');
         fetch('/api/add_user', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({username, limit, days})
-        }).then(res => res.json()).then(data => {
-            if(data.status === 'success') {
-                alert('کاربر با موفقیت ساخته شد');
-                location.reload();
-            } else {
-                alert('خطا: ' + data.message);
-            }
+            body: JSON.stringify({
+                username: username,
+                limit: document.getElementById('limit').value,
+                days: document.getElementById('days').value
+            })
+        }).then(() => {
+            document.getElementById('username').value = '';
+            updateData();
         });
     }
 
-    function resetUser(username) {
-        if(confirm(`آیا از تمدید و ریست حجم کاربر ${username} مطمئن هستید؟`)) {
-            fetch(`/api/reset_user/${username}`, {method: 'POST'})
-                .then(res => res.json())
-                .then(data => {
-                    if(data.status === 'success') location.reload();
-                    else alert('خطا در تمدید');
-                });
+    function resetUser(user) {
+        if(confirm('ریست حجم و تمدید زمان انجام شود؟')) {
+            fetch(`/api/reset_user/${user}`, {method: 'POST'}).then(() => updateData());
         }
     }
 
-    function deleteUser(username) {
-        if(confirm(`آیا از حذف کاربر ${username} مطمئن هستید؟`)) {
-            fetch(`/api/delete_user/${username}`, {method: 'DELETE'})
-                .then(res => res.json())
-                .then(data => {
-                    if(data.status === 'success') location.reload();
-                    else alert('خطا در حذف');
-                });
+    function deleteUser(user) {
+        if(confirm('حذف کاربر تایید شود؟')) {
+            fetch(`/api/delete_user/${user}`, {method: 'DELETE'}).then(() => updateData());
         }
     }
 
-    setInterval(fetchStats, 5000);
-    fetchStats();
+    setInterval(updateData, 5000);
+    updateData();
 </script>
-
 </body>
 </html>
