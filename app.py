@@ -82,4 +82,4 @@ def download_config(username):
     return send_from_directory(OVPN_FILES_PATH, f"{username}.ovpn", as_attachment=True)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=6000)
+    app.run(host='0.0.0.0', port=5000)
