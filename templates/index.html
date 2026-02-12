@@ -1,84 +1,35 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NYR Pro Panel | داشبورد مدیریتی</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
-    <style>
-        body { background: #050505; color: #e2e8f0; font-family: 'Tahoma', sans-serif; }
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .purple-glow { box-shadow: 0 0 20px rgba(139, 92, 246, 0.15); }
-    </style>
-</head>
-<body class="p-4 md:p-8">
+<script>
+    async function refreshStats() {
+        try {
+            const res = await fetch('/api/stats');
+            const data = await res.json();
+            
+            document.getElementById('total-users').innerText = data.total_users;
+            document.getElementById('online-users').innerText = data.online_users;
 
-    <div class="max-w-7xl mx-auto flex justify-between items-center mb-10 animate__animated animate__fadeInDown">
-        <div>
-            <h1 class="text-3xl font-black bg-gradient-to-l from-purple-500 to-blue-500 bg-clip-text text-transparent">NYR PRO PANEL</h1>
-            <p class="text-gray-500 text-sm mt-1">مدیریت هوشمند کاربران OpenVPN</p>
-        </div>
-        <div class="flex items-center gap-3">
-            <span class="relative flex h-3 w-3">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-            </span>
-            <span class="text-sm font-medium text-green-400">سرور فعال است</span>
-        </div>
-    </div>
+            const tbody = document.querySelector('tbody');
+            tbody.innerHTML = ''; 
 
-    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-        <div class="glass p-6 rounded-3xl purple-glow animate__animated animate__fadeInLeft">
-            <p class="text-gray-400 text-sm">کل کاربران</p>
-            <h3 class="text-3xl font-bold mt-2" id="total-users">--</h3>
-        </div>
-        <div class="glass p-6 rounded-3xl animate__animated animate__fadeInLeft" style="animation-delay: 0.1s">
-            <p class="text-gray-400 text-sm">آنلاین</p>
-            <h3 class="text-3xl font-bold mt-2 text-blue-400" id="online-users">--</h3>
-        </div>
-        <div class="glass p-6 rounded-3xl animate__animated animate__fadeInLeft" style="animation-delay: 0.2s">
-            <p class="text-gray-400 text-sm">ترافیک کل مصرفی</p>
-            <h3 class="text-3xl font-bold mt-2 text-purple-400">1.2 TB</h3>
-        </div>
-        <div class="glass p-6 rounded-3xl animate__animated animate__fadeInLeft" style="animation-delay: 0.3s">
-            <p class="text-gray-400 text-sm">وضعیت رم</p>
-            <h3 class="text-3xl font-bold mt-2 text-pink-400">24%</h3>
-        </div>
-    </div>
-
-    <div class="max-w-7xl mx-auto glass rounded-3xl overflow-hidden animate__animated animate__fadeInUp">
-        <div class="p-6 border-b border-white/5 flex justify-between items-center">
-            <h2 class="text-xl font-bold">لیست کاربران فعال</h2>
-            <button class="bg-gradient-to-l from-purple-600 to-blue-600 px-6 py-2 rounded-xl text-sm font-bold hover:scale-105 transition-all">کاربر جدید +</button>
-        </div>
-        <table class="w-full text-right">
-            <thead class="bg-white/5 text-gray-400 text-sm">
-                <tr>
-                    <th class="p-4">نام کاربری</th>
-                    <th class="p-4">حجم باقی‌مانده</th>
-                    <th class="p-4">انقضا</th>
-                    <th class="p-4">وضعیت</th>
-                    <th class="p-4">عملیات</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-white/5">
-                <tr class="hover:bg-white/5 transition-colors">
-                    <td class="p-4 font-medium">user_01</td>
-                    <td class="p-4 text-sm text-gray-400">12.5 GB / 50 GB</td>
-                    <td class="p-4 text-sm text-gray-400">14 روز</td>
-                    <td class="p-4"><span class="bg-green-500/10 text-green-500 px-3 py-1 rounded-full text-xs">متصل</span></td>
-                    <td class="p-4 flex gap-2">
-                        <button class="text-red-400 hover:text-red-300">حذف</button>
-                        <button class="text-blue-400 hover:text-blue-300">تمدید</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <script>
-        // اینجا در مرحله بعد کدهای JS برای گرفتن دیتا از API رو مینویسیم
-    </script>
-</body>
-</html>
+            data.users_list.forEach(user => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-white/5 transition-colors border-b border-white/5">
+                        <td class="p-4 font-medium text-purple-300">${user.username}</td>
+                        <td class="p-4 text-sm text-gray-400">${user.usage}</td>
+                        <td class="p-4 text-sm text-gray-400">${user.expiry} روز باقی‌مانده</td>
+                        <td class="p-4">
+                            <span class="${user.status === 'Online' ? 'text-green-400 bg-green-400/10' : 'text-gray-500 bg-white/5'} px-3 py-1 rounded-full text-xs animate-pulse">
+                                ${user.status}
+                            </span>
+                        </td>
+                        <td class="p-4 flex gap-4">
+                            <a href="/api/download/${user.username}" class="text-blue-400 hover:text-blue-200 transition-all font-bold">⬇ دانلود کانفیگ</a>
+                            <button class="text-red-500 hover:text-red-300">حذف</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        } catch (e) { console.log("Error fetching stats..."); }
+    }
+    setInterval(refreshStats, 5000); 
+    refreshStats();
+</script>
