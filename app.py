@@ -10,8 +10,9 @@ app = Flask(__name__)
 # Settings
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# مسیر اصلاح شده برای اوبونتو 20.04
-OVPN_FILES_PATH = "/root/"
+
+# مسیر دقیق فایل‌ها در اوبونتو 20.04 برای جلوگیری از خطای Not Found
+OVPN_FILES_PATH = "/root"
 INSTALLER_PATH = "/root/openvpn-install.sh"
 
 db = SQLAlchemy(app)
@@ -23,7 +24,6 @@ class User(db.Model):
     traffic_used_mb = db.Column(db.Float, default=0.0)
     expiry_date = db.Column(db.DateTime, nullable=False)
     is_active = db.Column(db.Boolean, default=True)
-    is_online = db.Column(db.Boolean, default=False)
 
 with app.app_context():
     db.create_all()
@@ -43,8 +43,14 @@ def add_user():
         return jsonify({"status": "error", "message": "User already exists"}), 400
 
     try:
-        # اجرای اسکریپت در حالت خودکار
-        subprocess.run(['bash', INSTALLER_PATH, '1', username], check=True, env={'MENU_OPTION': '1', 'CLIENT': username, 'PASS': '1'})
+        # اجرای اسکریپت نصب برای ساخت فایل ovpn
+        # استفاده از تنظیمات خودکار برای جلوگیری از توقف اسکریپت
+        env = os.environ.copy()
+        env['MENU_OPTION'] = '1'
+        env['CLIENT'] = username
+        env['PASS'] = '1'
+        
+        subprocess.run(['bash', INSTALLER_PATH, '1', username], check=True, env=env)
         
         new_user = User(
             username=username,
@@ -53,7 +59,7 @@ def add_user():
         )
         db.session.add(new_user)
         db.session.commit()
-        return jsonify({"status": "success", "message": f"User {username} created!"})
+        return jsonify({"status": "success"})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
@@ -68,15 +74,20 @@ def get_stats():
                 "username": u.username,
                 "usage": f"{round(u.traffic_used_mb / 1024, 2)} / {u.traffic_limit_gb} GB",
                 "expiry": (u.expiry_date - datetime.now()).days if u.expiry_date > datetime.now() else 0,
-                "status": "Active"
+                "status": "Active" if u.is_active else "Inactive"
             } for u in users
         ]
     })
 
 @app.route('/api/download/<username>')
 def download_config(username):
-    # فایل‌ها در اوبونتو 20.04 مستقیماً در root ذخیره می‌شوند
-    return send_from_directory(OVPN_FILES_PATH, f"{username}.ovpn", as_attachment=True)
+    # این بخش فایل را مستقیماً از پوشه root برمی‌دارد تا خطای 404 ندهد
+    filename = f"{username}.ovpn"
+    if os.path.exists(os.path.join(OVPN_FILES_PATH, filename)):
+        return send_from_directory(OVPN_FILES_PATH, filename, as_attachment=True)
+    else:
+        return jsonify({"status": "error", "message": "File not found on server"}), 404
 
 if __name__ == '__main__':
+    # پورت روی 5000 تنظیم شده تا مشکل Restricted Port مرورگر حل شود
     app.run(host='0.0.0.0', port=5000)
