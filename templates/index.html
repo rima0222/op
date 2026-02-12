@@ -3,149 +3,261 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NYR Pro Panel | مدیریت هوشمند</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <title>NYR PRO DASHBOARD</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;400;700&display=swap');
-        body { 
-            background: #020617; 
-            color: #e2e8f0; 
-            font-family: 'Vazirmatn', sans-serif; 
-            overflow-x: hidden;
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --primary: #3b82f6;
+            --accent: #06b6d4;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --text: #f8fafc;
         }
-        .glass { 
-            background: rgba(255, 255, 255, 0.02); 
-            backdrop-filter: blur(12px); 
-            border: 1px solid rgba(255, 255, 255, 0.05); 
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
         }
-        .purple-glow { box-shadow: 0 0 30px rgba(139, 92, 246, 0.1); }
-        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .stat-card i { color: var(--primary); margin-bottom: 10px; }
+
+        .add-user-box {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+        }
+
+        .input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap: 10px;
+        }
+
+        input {
+            background: #334155;
+            border: 1px solid #475569;
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            outline: none;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-add { background: var(--primary); color: white; padding: 0 25px; }
+        .btn-add:hover { background: #2563eb; transform: translateY(-2px); }
+
+        .user-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .user-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-right: 5px solid var(--primary);
+        }
+
+        .user-info h3 { margin: 0; font-size: 1.2rem; }
+        .user-info p { margin: 5px 0 0; font-size: 0.85rem; color: #94a3b8; }
+
+        .actions { display: flex; gap: 8px; }
+
+        .btn-action { padding: 8px 12px; font-size: 0.8rem; display: flex; align-items: center; gap: 5px; }
+        .btn-download { background: var(--success); color: white; }
+        .btn-reset { background: var(--warning); color: white; }
+        .btn-delete { background: var(--danger); color: white; }
+
+        @media (max-width: 600px) {
+            .input-group { grid-template-columns: 1fr; }
+            .user-card { flex-direction: column; text-align: center; gap: 15px; }
+            .user-card { border-right: none; border-top: 5px solid var(--primary); }
+        }
+
+        .badge {
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-size: 0.7rem;
+            margin-right: 5px;
+        }
+        .badge-active { background: rgba(34, 197, 94, 0.2); color: var(--success); }
     </style>
 </head>
-<body class="p-4 md:p-10">
+<body>
 
-    <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center mb-12 animate__animated animate__fadeIn">
-        <div class="text-center md:text-right mb-6 md:mb-0">
-            <h1 class="text-4xl font-black bg-gradient-to-r from-purple-400 via-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                NYR PRO DASHBOARD
-            </h1>
-            <p class="text-slate-500 text-sm mt-2 tracking-widest">ADVANCED VPN MANAGEMENT SYSTEM</p>
+<div class="container">
+    <div class="header">
+        <h1>NYR PRO DASHBOARD</h1>
+        <p>Advanced Management System</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <i class="fas fa-memory"></i>
+            <div id="ram-usage">0%</div>
+            <small>RAM</small>
         </div>
-        
-        <div class="flex gap-6 text-sm">
-            <div class="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-2xl border border-white/5">
-                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                <span>پورت: 6000</span>
-            </div>
-            <div class="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-2xl border border-white/5">
-                <span class="text-purple-400">RAM:</span>
-                <span id="ram-usage">--%</span>
-            </div>
+        <div class="stat-card">
+            <i class="fas fa-users"></i>
+            <div id="total-users">0</div>
+            <small>کاربران</small>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-plug"></i>
+            <div>5000</div>
+            <small>پورت پنل</small>
         </div>
     </div>
 
-    <div class="max-w-6xl mx-auto mb-10 animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
-        <div class="glass p-1 rounded-3xl flex flex-wrap md:flex-nowrap items-center gap-2">
-            <input id="new_user" type="text" placeholder="نام کاربری جدید..." class="bg-transparent flex-1 p-4 outline-none border-none text-sm placeholder:text-slate-600">
-            <input id="new_limit" type="number" placeholder="حجم (GB)" class="bg-white/5 border border-white/10 p-3 rounded-2xl text-sm w-full md:w-32 outline-none focus:border-purple-500 transition-all">
-            <input id="new_days" type="number" placeholder="زمان (روز)" class="bg-white/5 border border-white/10 p-3 rounded-2xl text-sm w-full md:w-32 outline-none focus:border-purple-500 transition-all">
-            <button onclick="createUser()" class="w-full md:w-auto bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 px-8 py-4 rounded-2xl text-sm font-bold transition-all transform hover:scale-105 active:scale-95 shadow-lg shadow-purple-900/20">
-                ایجاد کلاینت +
+    <div class="add-user-box">
+        <div class="input-group">
+            <input type="text" id="username" placeholder="نام کاربری">
+            <input type="number" id="limit" placeholder="حجم (GB)" value="10">
+            <input type="number" id="days" placeholder="زمان (روز)" value="30">
+            <button class="btn-add" onclick="addUser()">
+                <i class="fas fa-user-plus"></i> ساخت کاربر
             </button>
         </div>
     </div>
 
-    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-        <div class="glass p-8 rounded-[2rem] purple-glow animate__animated animate__zoomIn">
-            <p class="text-slate-400 text-xs uppercase tracking-tighter">Total Active Users</p>
-            <h3 class="text-5xl font-black mt-2 text-white" id="total-users">0</h3>
+    <div id="user-list" class="user-list">
         </div>
-        <div class="glass p-8 rounded-[2rem] animate__animated animate__zoomIn" style="animation-delay: 0.1s">
-            <p class="text-slate-400 text-xs uppercase tracking-tighter">Current Online</p>
-            <h3 class="text-5xl font-black mt-2 text-blue-500" id="online-users">0</h3>
-        </div>
-    </div>
+</div>
 
-    <div class="max-w-6xl mx-auto glass rounded-[2.5rem] overflow-hidden animate__animated animate__fadeInUp" style="animation-delay: 0.4s">
-        <div class="overflow-x-auto">
-            <table class="w-full text-right border-collapse">
-                <thead>
-                    <tr class="bg-white/5 border-b border-white/5">
-                        <th class="p-6 text-slate-400 font-medium text-sm">نام کاربری</th>
-                        <th class="p-6 text-slate-400 font-medium text-sm text-center">مصرف / سقف</th>
-                        <th class="p-6 text-slate-400 font-medium text-sm text-center">اعتبار باقی‌مانده</th>
-                        <th class="p-6 text-slate-400 font-medium text-sm text-center">وضعیت</th>
-                        <th class="p-6 text-slate-400 font-medium text-sm text-left">عملیات کلاینت</th>
-                    </tr>
-                </thead>
-                <tbody id="user-table-body" class="divide-y divide-white/5">
-                    </tbody>
-            </table>
-        </div>
-    </div>
-
-    <script>
-        async function refreshStats() {
-            try {
-                const res = await fetch('/api/stats');
-                const data = await res.json();
-                
-                document.getElementById('total-users').innerText = data.total_users;
-                document.getElementById('online-users').innerText = data.online_users;
+<script>
+    function fetchStats() {
+        fetch('/api/stats')
+            .then(res => res.json())
+            .then(data => {
                 document.getElementById('ram-usage').innerText = data.ram_usage;
-
-                const tbody = document.getElementById('user-table-body');
-                tbody.innerHTML = ''; 
-
+                document.getElementById('total-users').innerText = data.total_users;
+                
+                const list = document.getElementById('user-list');
+                list.innerHTML = '';
                 data.users_list.forEach(user => {
-                    const statusColor = user.status === 'Online' ? 'text-green-400 bg-green-400/10' : 'text-slate-500 bg-white/5';
-                    tbody.innerHTML += `
-                        <tr class="hover:bg-white/10 transition-all duration-300 group">
-                            <td class="p-6 font-bold text-slate-200 group-hover:text-purple-400">${user.username}</td>
-                            <td class="p-6 text-sm text-slate-400 text-center">${user.usage}</td>
-                            <td class="p-6 text-sm text-slate-400 text-center">${user.expiry} روز</td>
-                            <td class="p-6 text-center">
-                                <span class="${statusColor} px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border border-white/5">
-                                    ${user.status}
-                                </span>
-                            </td>
-                            <td class="p-6 flex justify-end gap-4">
-                                <a href="/api/download/${user.username}" class="bg-white/5 hover:bg-blue-600/20 text-blue-400 p-2.5 px-4 rounded-xl text-xs transition-all border border-white/5">
-                                    ⬇ دریافت فایل .ovpn
-                                </a>
-                                <button class="bg-white/5 hover:bg-red-600/20 text-red-500 p-2.5 px-4 rounded-xl text-xs transition-all border border-white/5">
-                                    حذف
+                    list.innerHTML += `
+                        <div class="user-card">
+                            <div class="user-info">
+                                <h3>${user.username} <span class="badge badge-active">${user.status}</span></h3>
+                                <p>
+                                    <i class="fas fa-chart-pie"></i> مصرف: ${user.usage} | 
+                                    <i class="fas fa-clock"></i> انقضا: ${user.expiry} روز
+                                </p>
+                            </div>
+                            <div class="actions">
+                                <button class="btn-action btn-download" onclick="window.location='/api/download/${user.username}'">
+                                    <i class="fas fa-download"></i> دانلود
                                 </button>
-                            </td>
-                        </tr>
+                                <button class="btn-action btn-reset" onclick="resetUser('${user.username}')">
+                                    <i class="fas fa-sync-alt"></i> تمدید
+                                </button>
+                                <button class="btn-action btn-delete" onclick="deleteUser('${user.username}')">
+                                    <i class="fas fa-trash"></i> حذف
+                                </button>
+                            </div>
+                        </div>
                     `;
                 });
-            } catch (e) { console.error("Error updating dashboard:", e); }
-        }
-
-        async function createUser() {
-            const username = document.getElementById('new_user').value;
-            const limit = document.getElementById('new_limit').value;
-            const days = document.getElementById('new_days').value;
-
-            if(!username) return alert("نام کاربری الزامی است");
-
-            const res = await fetch('/api/add_user', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({username, limit, days})
             });
-            const result = await res.json();
-            alert(result.message);
-            
-            // Clear inputs
-            document.getElementById('new_user').value = '';
-            refreshStats();
-        }
+    }
 
-        setInterval(refreshStats, 5000); 
-        refreshStats();
-    </script>
+    function addUser() {
+        const username = document.getElementById('username').value;
+        const limit = document.getElementById('limit').value;
+        const days = document.getElementById('days').value;
+
+        if(!username) return alert('نام کاربری الزامی است');
+
+        fetch('/api/add_user', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({username, limit, days})
+        }).then(res => res.json()).then(data => {
+            if(data.status === 'success') {
+                alert('کاربر با موفقیت ساخته شد');
+                location.reload();
+            } else {
+                alert('خطا: ' + data.message);
+            }
+        });
+    }
+
+    function resetUser(username) {
+        if(confirm(`آیا از تمدید و ریست حجم کاربر ${username} مطمئن هستید؟`)) {
+            fetch(`/api/reset_user/${username}`, {method: 'POST'})
+                .then(res => res.json())
+                .then(data => {
+                    if(data.status === 'success') location.reload();
+                    else alert('خطا در تمدید');
+                });
+        }
+    }
+
+    function deleteUser(username) {
+        if(confirm(`آیا از حذف کاربر ${username} مطمئن هستید؟`)) {
+            fetch(`/api/delete_user/${username}`, {method: 'DELETE'})
+                .then(res => res.json())
+                .then(data => {
+                    if(data.status === 'success') location.reload();
+                    else alert('خطا در حذف');
+                });
+        }
+    }
+
+    setInterval(fetchStats, 5000);
+    fetchStats();
+</script>
+
 </body>
 </html>
