@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
 import os
@@ -6,13 +6,13 @@ import psutil
 
 app = Flask(__name__)
 
-# تنظیمات دیتابیس (ذخیره در فایل database.db)
+# مسیرها و تنظیمات
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+OVPN_FILES_PATH = "/etc/openvpn/client/"
 
 db = SQLAlchemy(app)
 
-# مدل دیتابیس برای مدیریت کاربران
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
@@ -23,22 +23,17 @@ class User(db.Model):
     is_active = db.Column(db.Boolean, default=True)
     is_online = db.Column(db.Boolean, default=False)
 
-# ایجاد جداول دیتابیس در اولین اجرا
 with app.app_context():
     db.create_all()
 
-# مسیر اصلی برای نمایش پنل گرافیکی
 @app.route('/')
 def index():
     return render_template('index.html')
 
-# API برای گرفتن آمار لحظه‌ای (توسط JS در ایندکس صدا زده می‌شود)
 @app.route('/api/stats')
 def get_stats():
     users = User.query.all()
     online_count = User.query.filter_by(is_online=True).count()
-    
-    # دریافت درصد مصرف رم سرور
     ram_usage = psutil.virtual_memory().percent
     
     return jsonify({
@@ -49,12 +44,16 @@ def get_stats():
             {
                 "username": u.username,
                 "usage": f"{round(u.traffic_used_mb / 1024, 2)} / {u.traffic_limit_gb} GB",
-                "expiry": (u.expiry_date - datetime.now()).days,
+                "expiry": (u.expiry_date - datetime.now()).days if u.expiry_date > datetime.now() else 0,
                 "status": "Online" if u.is_online else "Offline"
             } for u in users
         ]
     })
 
-# اجرای برنامه روی پورت 6000
+@app.route('/api/download/<username>')
+def download_config(username):
+    filename = f"{username}.ovpn"
+    return send_from_directory(OVPN_FILES_PATH, filename, as_attachment=True)
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=6000)
